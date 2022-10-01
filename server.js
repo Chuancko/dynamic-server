@@ -20,12 +20,12 @@ var server = http.createServer(function (request, response) {
   var method = request.method
 
   /******** 从这里开始看，上面不要看 ************/
+  const userArray = JSON.parse(fs.readFileSync('./db/users.json'))
   const session = JSON.parse(fs.readFileSync('./session.json').toString())
 
   console.log('有个傻子发请求过来啦！路径（带查询参数）为：' + pathWithQuery)
 
   if (path === '/sign_in' && method === 'POST') {
-    const userArray = JSON.parse(fs.readFileSync('./db/users.json'))
     const array = []
     request.on('data', (chunk) => {
       array.push(chunk)
@@ -63,7 +63,6 @@ var server = http.createServer(function (request, response) {
     } catch (error) {}
     if (sessionID && session[sessionID]) {
       const userID = session[sessionID].user_id //数字
-      const userArray = JSON.parse(fs.readFileSync('./db/users.json'))
       const user = userArray.find((user) => user.id === userID)
       const homeHtml = fs.readFileSync('./public/home.html').toString()
       //传了userID不代表就有这个user.id，所以需要判断user存在与否
@@ -84,7 +83,6 @@ var server = http.createServer(function (request, response) {
     response.end()
   } else if (path === '/register' && method === 'POST') {
     response.setHeader('Content-Type', 'text/html;charset=utf-8')
-    const userArray = JSON.parse(fs.readFileSync('./db/users.json'))
     //设置空数组是因为数据有可能是分段上传的
     const array = []
     request.on('data', (chunk) => {
